@@ -8,6 +8,7 @@ function World() {
     this.MODE_END_VICTORY = 3;
     this.MODE_END_DEFEAT = 4;
 
+    this.KEY_P = 80;
     this.KEY_LEFT = 37;
     this.KEY_RIGHT = 39;
     this.KEY_UP = 38;
@@ -65,6 +66,9 @@ function World() {
     }
 
     this.update = function() {
+	if ( this.keys[this.KEY_P] ) { 
+	    return;
+	}
 	this.map.update();
 	for( var i = 0; i < this.balls.length ; i++ ) {
 	    this.balls[i].update();
