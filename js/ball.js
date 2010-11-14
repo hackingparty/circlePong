@@ -41,7 +41,6 @@ function Ball( world, x, y ) {
 	// test collision with rackets
 	for (var ridx = 0; ridx < this.world.rackets.length; ridx++){
 	    var racket = this.world.rackets[ridx];
-	    var dist_to_racket = 0; 
 
 	    // previous ball position
 	    var prev = { 
@@ -76,18 +75,39 @@ function Ball( world, x, y ) {
 	    }
 	    
 	    // haha, we got a collision !
-	    console.log("u1 = "  + u1 );
-	    console.log("u2 = " + u2 );
-	    console.log("collision with racket idx = " + ridx);
+	    // console.log("u1 = "  + u1 );
+	    // console.log("u2 = " + u2 );
+	    // console.log("collision with racket idx = " + ridx);
+
+
+	    // fix ball location
+	    var intersec = {
+		x : racket.start.x + u2 * racket.dx,
+		y : racket.start.y + u2 * racket.dy
+	    };
+	    // intersection + ball size + fix
+	    // console.log("inter.x = " + intersec.x + " ; inter.y = " + intersec.y);
+	    // console.log("this.dx = " + this.dx + " ; this.dy = " + this.dy);
+	    this.x = intersec.x - (1 - u1) * this.dx;
+	    this.y = intersec.y - (1 - u1) * this.dy;
+	    // console.log("fixed.x = " + this.x + " ; fixed.y = " + this.y);
+
+	    // new direction is the opposite of mirror direction of the ball given racket position
+	    this.direction = ( 2 * racket.center.rad)  - ( this.direction + Math.PI );
+	    if (this.direction < 0) {
+		this.direction = this.direction % ( 2 * Math.PI );
+	    }
 	}	    
 
 	// collision with the map
 	// => distance from the center is greater than map ray
 	if ( dist_to_center > map_ray ) {
-	    this.direction += Math.PI;
+	    var ball_angle = Math.atan2( this.y - map_center, this.x - map_center );
+	    this.direction = 2 * ball_angle - this.direction + Math.PI;
+	    if (this.direction < 0) {
+		this.direction = this.direction % ( 2 * Math.PI );
+	    }
 
-	    // FIXME: compute correctly the new position
-	    // FIXME that works only with perpendicular move
 	    var dx = Math.cos( this.direction ) * ( dist_to_center - map_ray );
 	    var dy = Math.sin( this.direction ) * ( dist_to_center - map_ray );
 
