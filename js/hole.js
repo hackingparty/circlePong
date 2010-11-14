@@ -2,12 +2,6 @@
 function Hole( world, x,y ) {
     this.DEFAULT_SIZE = 12;
 
-    this.world = world;
-    this.x = x;
-    this.y = y;
-    this.size = this.DEFAULT_SIZE;
-    world.addHole( this );
-
     this.update = function(){
 	// do nothing
     };
@@ -29,7 +23,21 @@ function Hole( world, x,y ) {
 
     this.collide = function( candidate ) {
 	// do nothing
-    }
+    };
+
+    this.setIndex = function( idx ) {
+	this.index = idx;
+    };
+
+
+    // constructor
+    this.world = world;
+    this.x = x;
+    this.y = y;
+    this.size = this.DEFAULT_SIZE;
+    this.index = 0;
+
+    world.addHole( this );
 }
 
 

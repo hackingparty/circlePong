@@ -7,28 +7,7 @@ function Ball( world, x, y ) {
     this.DEFAULT_SIZE = 5;
     this.DEFAULT_DIRECTION = 0;
 
-    // constructor
-    this.world = world;
-
-    // initial position
-    this.x = world.map.size / 2;
-    this.y = world.map.size / 2;
-
-    // initial movement
-    this.direction = Math.random() * 2 * Math.PI;
-    this.speed = this.DEFAULT_SPEED;
-    this.size = this.DEFAULT_SIZE;
-
-    /*
-    console.log( "Ball.new( x = " + this.x 
-	+ " ; y = " + this.y 
-	+ " ; direction = " + this.direction 
-	+ " ; speed = " + this.speed
-	+ " )");
-    */
-
-    world.addBall( this );
-
+    // methods
     this.update = function() {
 	var dx = Math.cos( this.direction ) * this.speed;
 	var dy = Math.sin( this.direction ) * this.speed;
@@ -73,4 +52,30 @@ function Ball( world, x, y ) {
 
 	// do nothing
     };
+
+    this.setIndex = function( idx ) {
+	this.index = idx;
+    };
+
+    this.initialize = function() {
+	// do nothing
+    }
+
+    // constructor
+    this.world = world;
+
+    // initial position
+    this.x = world.map.size / 2;
+    this.y = world.map.size / 2;
+
+    // initial movement
+    this.direction = Math.random() * 2 * Math.PI;
+    this.speed = this.DEFAULT_SPEED;
+    this.size = this.DEFAULT_SIZE;
+    this.index = 0;
+
+    // console.log( "Ball.new( x = " + this.x  + " ; y = " + this.y 
+    //	+ " ; direction = " + this.direction + " ; speed = " + this.speed + " )");
+
+    world.addBall( this );
 }

@@ -1,5 +1,7 @@
 
 function World() {
+
+    // default values
     this.MODE_INTRO = 0;
     this.MODE_CONFIG = 1;
     this.MODE_GAME = 2;
@@ -11,29 +13,27 @@ function World() {
     this.KEY_UP = 38;
     this.KEY_DOWN = 40;
 
-    this.balls = [];
-    this.holes = [];
-    this.rackets = [];
-    this.map = null;
-    this.context = null;
-    this.canvas = null;
-    this.keys = [];
-
     this.ACTION_RACKET1_MOVE_LEFT = 0;
     this.ACTION_RACKET1_MOVE_RIGHT = 1;
     this.ACTION_RACKET2_MOVE_LEFT = 2;
     this.ACTION_RACKET2_MOVE_RIGHT = 3;
 
+    // methods
     this.addBall = function( elem ){
+	elem.setIndex( this.balls.length );
 	this.balls[ this.balls.length ] = elem;
     }
 
     this.addHole = function( elem ){
+	elem.setIndex( this.holes.length );
 	this.holes[ this.holes.length ] = elem;
     }
 
     this.addRacket = function( elem ){
+	// console.log("worldt -- addracket start");
+	elem.setIndex( this.rackets.length );
 	this.rackets[ this.rackets.length ] = elem;
+	// console.log("worldt -- addracket stop");
     }
 
     this.keydown = function( e ){
@@ -55,13 +55,16 @@ function World() {
     }
 
 
+    this.initialize = function() {
+	for( var i = 0; i < this.balls.length ; i++ ) {
+	    this.balls[i].initialize();
+	}
+	for( var i = 0; i < this.rackets.length ; i++ ) {
+	    this.rackets[i].initialize();
+	}
+    }
+
     this.update = function() {
-	// console.log("World.update - " + this);
-	// console.log("World.update -- start !");
-
-	// get all registered objects & update everybody
-	// console.log("World.update -- stop !");
-
 	this.map.update();
 	for( var i = 0; i < this.balls.length ; i++ ) {
 	    this.balls[i].update();
@@ -89,4 +92,13 @@ function World() {
 	    this.balls[i].collide();
 	}
     }
+
+    // constructor
+    this.balls = [];
+    this.holes = [];
+    this.rackets = [];
+    this.map = null;
+    this.context = null;
+    this.canvas = null;
+    this.keys = [];
 }
