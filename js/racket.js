@@ -1,12 +1,13 @@
 
-// TODO: initialize position depending on registered rackets in this world
+// TODO: initialize positionition depending on registered rackets in this world
 // TODO: initialize color depending on current index
 function Racket( world ) {
 
     // default values
-    this.DEFAULT_SIZE = 40;
+    this.DEFAULT_SIZE = 40 * (Math.PI / 180);  // in radians
     this.DEFAULT_WIDTH = 5;
-    this.DEFAULT_STEP = 7;
+    this.DEFAULT_ACCELERATION = 2; // in radians / sec * sec
+    this.DEFAULT_VELOCITY = 7 * (Math.PI / 180); // in radians / sec
     this.DEFAULT_COLOR = [ "#ff0000", "#00ff00", "#0000ff", 
 	"#ffff00", "#00ffff", "#ff00ff",
 	"#ffaa00", "#00ffaa", "#aa00ff",
@@ -38,30 +39,15 @@ function Racket( world ) {
 
     this.update = function(){
 	if ( this.world.keys[this.world.KEY_RIGHT] == true ) {
-	    this.pos -= this.step;
+	    this.setCenter( this.center.rad - this.velocity );
 	} else if ( this.world.keys[this.world.KEY_LEFT] == true ) {
-	    this.pos += this.step;
+	    this.setCenter( this.center.rad + this.velocity );
 	}
 
-	var map_center = this.world.map.size / 2;
-
-	var pstart = this.pos - this.size / 2;
-	var pstop = this.pos + this.size / 2;
-
-	this.start.rad = pstart * Math.PI / 180;
-	this.stop.rad = pstop * Math.PI / 180;
-
-	this.start.x = map_center + this.ray * Math.cos( this.start.rad );
-	this.start.y = map_center + this.ray * Math.sin( this.start.rad );
-	this.stop.x = map_center + this.ray * Math.cos( this.stop.rad );
-	this.stop.y = map_center + this.ray * Math.sin( this.stop.rad );
-
-	this.dx = this.stop.x - this.start.x;
-	this.dy = this.stop.y - this.start.y;
     };
 
     this.initialize = function() {
-	this.pos = this.index * 360 / this.world.rackets.length;
+	this.setCenter( this.index * 2 * Math.PI / this.world.rackets.length );
 	this.color = this.DEFAULT_COLOR[this.index];
     }
 
@@ -69,19 +55,37 @@ function Racket( world ) {
 	this.index = idx;
     };
 
+    this.setCenter = function( angle_rad ) {
+	var map_center = this.world.map.size / 2;
+
+	this.center.rad = angle_rad;
+	this.start.rad = this.center.rad - this.size / 2;
+	this.stop.rad = this.center.rad + this.size / 2;
+
+	this.start.x = map_center + this.ray * Math.cos( this.start.rad );
+	this.start.y = map_center + this.ray * Math.sin( this.start.rad );
+	this.stop.x = map_center + this.ray * Math.cos( this.stop.rad );
+	this.stop.y = map_center + this.ray * Math.sin( this.stop.rad );
+
+	this.center.x = (this.start.x + this.stop.x) / 2;
+	this.center.y = (this.start.y + this.stop.y) / 2;
+
+	this.dx = this.stop.x - this.start.x;
+	this.dy = this.stop.y - this.start.y;
+    }
 
     // constructor
     this.size = this.DEFAULT_SIZE;
     this.width = this.DEFAULT_WIDTH;
-    this.step = this.DEFAULT_STEP;
+    this.velocity = this.DEFAULT_VELOCITY;
     this.world = world;
-    this.pos = 0;
     this.index = 0;
     this.ray = this.world.map.ray - this.width;
 
     // auto-generated values
     this.start = { rad: null, x: null, y: null};
     this.stop = { rad: null, x: null, y: null};
+    this.center = { rad: null, x: null, y: null };
     this.dx = null;
     this.dy = null;
 
