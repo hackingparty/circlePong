@@ -7,41 +7,29 @@ function Racket( world ) {
     this.DEFAULT_SIZE = 40;
     this.DEFAULT_WIDTH = 5;
     this.DEFAULT_STEP = 7;
-    this.DEFAULT_COLOR = [ "#ff0000", "#00ff00", "#0000ff", "#888800", "#008888", "#88088" ];
+    this.DEFAULT_COLOR = [ "#ff0000", "#00ff00", "#0000ff", 
+	"#ffff00", "#00ffff", "#ff00ff",
+	"#ffaa00", "#00ffaa", "#aa00ff",
+	"#aaff00", "#00aaff", "#ff00aa",
+	];
 
     // methods
     this.draw = function(){
 	var ctx = this.world.context;
-
-	var pstart = this.pos - this.size / 2;
-	var pstop = this.pos + this.size / 2;
-
-	// console.log("pstart = " + pstart + " ; pstop = " + pstop);
-
-	var pstart_rad = pstart * Math.PI / 180;
-	var pstop_rad = pstop * Math.PI / 180;
-
 	var map_center = this.world.map.size / 2;
-	var ray = this.world.map.ray - this.width;
 
 	ctx.save();
-	ctx.strokeStyle = this.color;
+	ctx.strokeStyle = "#000000"; //this.color;
 	ctx.fillStyle = this.color;
 	ctx.lineWidth = this.width;
 
-
-	pstart_x = map_center + ray * Math.cos( pstart_rad );
-	pstart_y = map_center + ray * Math.sin( pstart_rad );
-	pstop_x = map_center + ray * Math.cos( pstop_rad );
-	pstop_y = map_center + ray * Math.sin( pstop_rad );
-
 	// console.log( "map_center = " + map_center + " ; ray = " + ray
-	//  + " ; pstop_rad " + pstop_rad + " ; pstart_rad " + pstart_rad + " )");
+	//  + " ; pstop_rad " + this.stop.rad + " ; this.start.rad " + this.start.rad + " )");
 
 	ctx.beginPath();
-	ctx.arc( map_center, map_center, ray, pstop_rad, pstart_rad, true );
-	ctx.moveTo( pstart_x, pstart_y );
-	ctx.lineTo( pstop_x, pstop_y );
+	ctx.arc( map_center, map_center, this.ray, this.stop.rad, this.start.rad, true );
+	ctx.moveTo( this.start.x, this.start.y );
+	ctx.lineTo( this.stop.x, this.stop.y );
 	ctx.closePath();
 	ctx.stroke();
 	ctx.fill();
@@ -54,6 +42,22 @@ function Racket( world ) {
 	} else if ( this.world.keys[this.world.KEY_LEFT] == true ) {
 	    this.pos += this.step;
 	}
+
+	var map_center = this.world.map.size / 2;
+
+	var pstart = this.pos - this.size / 2;
+	var pstop = this.pos + this.size / 2;
+
+	this.start.rad = pstart * Math.PI / 180;
+	this.stop.rad = pstop * Math.PI / 180;
+
+	this.start.x = map_center + this.ray * Math.cos( this.start.rad );
+	this.start.y = map_center + this.ray * Math.sin( this.start.rad );
+	this.stop.x = map_center + this.ray * Math.cos( this.stop.rad );
+	this.stop.y = map_center + this.ray * Math.sin( this.stop.rad );
+
+	this.dx = this.stop.x - this.start.x;
+	this.dy = this.stop.y - this.start.y;
     };
 
     this.initialize = function() {
@@ -73,6 +77,13 @@ function Racket( world ) {
     this.world = world;
     this.pos = 0;
     this.index = 0;
+    this.ray = this.world.map.ray - this.width;
+
+    // auto-generated values
+    this.start = { rad: null, x: null, y: null};
+    this.stop = { rad: null, x: null, y: null};
+    this.dx = null;
+    this.dy = null;
 
     world.addRacket( this );
 }
